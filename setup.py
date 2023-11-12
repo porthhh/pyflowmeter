@@ -6,11 +6,11 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = "cicflowmeter"
+NAME = "pyflowmeter"
 DESCRIPTION = "CICFlowMeter V3 Python Implementation"
-URL = "https://gitlab.com/hieulw/cicflowmeter"
-EMAIL = "hieulw99@gmail.com"
-AUTHOR = "Le Hieu"
+URL = "https://github.com/DavidRamosArchilla/pyflowmeter"
+# EMAIL = "hieulw99@gmail.com"
+AUTHOR = "David Ramos Archilla"
 REQUIRES_PYTHON = ">=3.7.0"
 VERSION = None
 
@@ -62,15 +62,15 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author=AUTHOR,
-    author_email=EMAIL,
+    # author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages("src"),
     # package_dir={"cicflowmeter": "src/cicflowmeter"},
     package_dir={"": "src"},
-    entry_points={
-        "console_scripts": ["cicflowmeter=cicflowmeter.sniffer:main"],
-    },
+    # entry_points={
+    #     "console_scripts": ["cicflowmeter=cicflowmeter.sniffer:main"],
+    # },
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",
