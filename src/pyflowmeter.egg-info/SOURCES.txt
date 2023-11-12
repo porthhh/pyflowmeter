@@ -24,3 +24,4 @@ src/pyflowmeter/features/context/__init__.py
 src/pyflowmeter/features/context/packet_direction.py
 src/pyflowmeter/features/context/packet_flow_key.py
 tests/test_features.py
+tests/test_sniffer.py

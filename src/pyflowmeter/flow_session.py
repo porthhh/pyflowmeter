@@ -13,8 +13,6 @@ import requests
 
 
 EXPIRED_UPDATE = 40
-MACHINE_LEARNING_API = "http://localhost:8000/predict"
-# GARBAGE_COLLECT_PACKETS = 100
 SENDING_INTERVAL = 1
 
 class FlowSession(DefaultSession):
@@ -22,18 +20,10 @@ class FlowSession(DefaultSession):
 
     def __init__(self, *args, **kwargs):
         self.flows = {}
-        self.csv_line = 0
-
-        if self.output_mode == "flow":
-            output = open(self.output_file, "w")
-            self.csv_writer = csv.writer(output)
 
         self.packets_count = 0
-
-        self.clumped_flows_per_label = defaultdict(list)
         self.GARBAGE_COLLECT_PACKETS = 10000 if not self.url_model else 100
-
-
+        print(self.server_endpoint)
         self.start_time = 0
         self.lock = Lock() 
         thread = Thread(target=self.send_flows_to_server)
@@ -46,7 +36,7 @@ class FlowSession(DefaultSession):
             if len(self.flows) != 0:
                 flows = list(self.flows.values())
                 data = {'flows': [flow.get_data() for flow in flows]}
-                requests.post('http://127.0.0.1:5000/send_traffic', json=data)
+                requests.post(self.server_endpoint, json=data)
                 self.garbage_collect()
             time.sleep(SENDING_INTERVAL)
 
@@ -60,12 +50,6 @@ class FlowSession(DefaultSession):
     def on_packet_received(self, packet):
         count = 0
         direction = PacketDirection.FORWARD
-        
-        if self.output_mode != "flow":
-            if "TCP" not in packet:
-                return
-            elif "UDP" not in packet:
-                return
 
         try:
             # Creates a key variable to check
@@ -75,6 +59,7 @@ class FlowSession(DefaultSession):
             return
 
         self.packets_count += 1
+        print('New packet received. Count: ' + str(self.packets_count))
 
         # If there is no forward flow with a count of 0
         if flow is None:
@@ -118,11 +103,9 @@ class FlowSession(DefaultSession):
             self.start_time = current_time
             self.garbage_collect()
 
-        # if not self.url_model:
-        #     GARBAGE_COLLECT_PACKETS = 10000
 
         if self.packets_count % self.GARBAGE_COLLECT_PACKETS == 0 or (
-            flow.duration > 120 and self.output_mode == "flow"
+            flow.duration > 120 
         ):
             self.garbage_collect()
 
@@ -135,13 +118,13 @@ class FlowSession(DefaultSession):
 
 
 
-def generate_session_class(output_mode, output_file, url_model):
+def generate_session_class(output_file, server_endpoint, url_model):
     return type(
         "NewFlowSession",
         (FlowSession,),
         {
-            "output_mode": output_mode,
             "output_file": output_file,
+            "server_endpoint": server_endpoint,
             "url_model": url_model,
         },
     )

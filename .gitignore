@@ -10,3 +10,4 @@ build/
 *.pcap
 *.pyc
 .idea
+.pypirc
