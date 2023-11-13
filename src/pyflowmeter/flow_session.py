@@ -1,5 +1,3 @@
-import csv
-from collections import defaultdict
 import time
 from threading import Thread, Lock
 
@@ -22,12 +20,13 @@ class FlowSession(DefaultSession):
         self.flows = {}
 
         self.packets_count = 0
-        self.GARBAGE_COLLECT_PACKETS = 10000 if not self.url_model else 100
+        self.GARBAGE_COLLECT_PACKETS = 10000 if self.server_endpoint is None else 100
         print(self.server_endpoint)
         self.start_time = 0
-        self.lock = Lock() 
-        thread = Thread(target=self.send_flows_to_server)
-        thread.start()
+        if self.server_endpoint is not None:
+            self.lock = Lock() 
+            thread = Thread(target=self.send_flows_to_server)
+            thread.start()
 
         super(FlowSession, self).__init__(*args, **kwargs)
 
@@ -59,7 +58,8 @@ class FlowSession(DefaultSession):
             return
 
         self.packets_count += 1
-        print('New packet received. Count: ' + str(self.packets_count))
+        if self.verbose:
+            print('New packet received. Count: ' + str(self.packets_count))
 
         # If there is no forward flow with a count of 0
         if flow is None:
@@ -118,13 +118,12 @@ class FlowSession(DefaultSession):
 
 
 
-def generate_session_class(output_file, server_endpoint, url_model):
+def generate_session_class(server_endpoint, verbose):
     return type(
         "NewFlowSession",
         (FlowSession,),
         {
-            "output_file": output_file,
             "server_endpoint": server_endpoint,
-            "url_model": url_model,
+            "verbose": verbose,
         },
     )

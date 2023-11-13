@@ -6,11 +6,11 @@ from .flow_session import generate_session_class
 
 
 def create_sniffer(
-    input_file, input_interface, output_file, server_endpoint, url_model=None
+    input_file=None, input_interface=None, server_endpoint=None, verbose=False
 ):
     # assert (input_file is None) ^ (input_interface is None)
 
-    NewFlowSession = generate_session_class(output_file, server_endpoint, url_model)
+    NewFlowSession = generate_session_class(server_endpoint, verbose)
 
     if input_file is not None:
         return AsyncSniffer(
