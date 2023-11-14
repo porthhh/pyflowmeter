@@ -1,39 +1,50 @@
-# Python CICFlowMeter
+# Python CICFlowMeter (PyFlowmeter)
 
 > This project is cloned from [Python Wrapper CICflowmeter](https://gitlab.com/hieulw/cicflowmeter) and customized to fit my need. Therefore, it is not maintained actively. If there are any problems, please create an issue or a pull request.  
 
 
 ### Installation
 ```sh
-git clone https://github.com/datthinh1801/cicflowmeter.git
-cd cicflowmeter
-python3 setup.py install
+pip install pyflowmeter
 ```
 
-### Usage
-```sh
-usage: cicflowmeter [-h] (-i INPUT_INTERFACE | -f INPUT_FILE) [-c] [-u URL_MODEL] output
-
-positional arguments:
-  output                output file name (in flow mode) or directory (in sequence mode)
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT_INTERFACE    capture online data from INPUT_INTERFACE
-  -f INPUT_FILE         capture offline data from INPUT_FILE
-  -c, --csv, --flow     output flows as csv
+# Usage
+```python
+from pyflowmeter.sniffer import create_sniffer
 ```
+## Parameters
 
-Convert pcap file to flow csv:
+* `input_file` [default=None]  
+    * A .pcap file where capture offline data from  
 
-```
-cicflowmeter -f example.pcap -c flows.csv
-```
+* `input_interface` [default=None]  
+    *  Interface or list of interfaces (default: None for sniffing on all interfaces).  
 
-Sniff packets real-time from interface to flow csv: (**need root permission**)
+* server_endpoint [default=None]  
+    * A server endpoint where the data of the flow will be sent. If it is set to `None`, no data will be sent.  
 
-```
-cicflowmeter -i eth0 -c flows.csv
+* verbose [default=False]  
+    * Wheather or not to print a message when a new packet is read.
+
+## Examples
+
+### Sniff packets real-time from interface and send the flow to a server (**need root permission**): 
+```python
+from pyflowmeter.sniffer import create_sniffer
+
+sniffer = create_sniffer(
+            server_endpoint='http://127.0.0.1:5000/send_traffic',
+            verbose=True
+        )
+
+sniffer.start()
+try:
+    sniffer.join()
+except KeyboardInterrupt:
+    print('Stopping the sniffer')
+    sniffer.stop()
+finally:
+    sniffer.join()
 ```
 
 - Reference: https://www.unb.ca/cic/research/applications.html#CICFlowMeter
