@@ -5,6 +5,7 @@
 
 ### Installation
 ```sh
+pip install --upgrade pip
 pip install pyflowmeter
 ```
 

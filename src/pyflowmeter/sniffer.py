@@ -1,5 +1,3 @@
-import argparse
-
 from scapy.sendrecv import AsyncSniffer
 
 from .flow_session import generate_session_class
