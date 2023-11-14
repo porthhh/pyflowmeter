@@ -12,6 +12,8 @@ pip install pyflowmeter
 ```python
 from pyflowmeter.sniffer import create_sniffer
 ```
+This function returns a `scapy.sendrecv.AsyncSniffer` object.
+
 ## Parameters
 
 * `input_file` [default=None]  
@@ -20,10 +22,10 @@ from pyflowmeter.sniffer import create_sniffer
 * `input_interface` [default=None]  
     *  Interface or list of interfaces (default: None for sniffing on all interfaces).  
 
-* server_endpoint [default=None]  
+* `server_endpoint` [default=None]  
     * A server endpoint where the data of the flow will be sent. If it is set to `None`, no data will be sent.  
 
-* verbose [default=False]  
+* `verbose` [default=False]  
     * Wheather or not to print a message when a new packet is read.
 
 ## Examples
