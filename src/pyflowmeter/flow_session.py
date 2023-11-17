@@ -1,5 +1,6 @@
 import time
 from threading import Thread, Lock
+import csv
 
 from scapy.sessions import DefaultSession
 
@@ -18,15 +19,19 @@ class FlowSession(DefaultSession):
 
     def __init__(self, *args, **kwargs):
         self.flows = {}
-
+        self.csv_line = 0
         self.packets_count = 0
         self.GARBAGE_COLLECT_PACKETS = 10000 if self.server_endpoint is None else 100
         print(self.server_endpoint)
         self.start_time = 0
+        self.lock = Lock() 
         if self.server_endpoint is not None:
-            self.lock = Lock() 
             thread = Thread(target=self.send_flows_to_server)
             thread.start()
+        
+        if self.to_csv:
+            output = open(self.output_file, "w")
+            self.csv_writer = csv.writer(output)
 
         super(FlowSession, self).__init__(*args, **kwargs)
 
@@ -111,19 +116,32 @@ class FlowSession(DefaultSession):
 
     def get_flows(self) -> list:
         return self.flows.values()
+    
+    def write_data_csv(self):
+        for flow in self.flows.values():
+            data = flow.get_data()
+
+            if self.csv_line == 0:
+                self.csv_writer.writerow(data.keys())
+
+            self.csv_writer.writerow(data.values())
+            self.csv_line += 1
 
     def garbage_collect(self) -> None:
+        self.write_data_csv()
         with self.lock:
             self.flows = {}
 
 
 
-def generate_session_class(server_endpoint, verbose):
+def generate_session_class(server_endpoint, verbose, to_csv, output_file):
     return type(
         "NewFlowSession",
         (FlowSession,),
         {
             "server_endpoint": server_endpoint,
             "verbose": verbose,
+            "to_csv": to_csv,
+            "output_file": output_file
         },
     )

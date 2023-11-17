@@ -18,7 +18,7 @@ This function returns a `scapy.sendrecv.AsyncSniffer` object.
 ## Parameters
 
 * `input_file` [default=None]  
-    * A .pcap file where capture offline data from  
+    * A .pcap file where capture offline data from. If it is set to ´None´, the data will be capture from `input_interface`
 
 * `input_interface` [default=None]  
     *  Interface or list of interfaces (default: None for sniffing on all interfaces).  
@@ -28,6 +28,12 @@ This function returns a `scapy.sendrecv.AsyncSniffer` object.
 
 * `verbose` [default=False]  
     * Wheather or not to print a message when a new packet is read.
+
+* `to_csv` [defalut=Fasle]  
+    * Wheather or not to save the output flows as csv. The data will be saved on `output_file`.
+
+* `output_file` [default=None]  
+    * File to store the data. If `to_csv` is set to `False`, this parameter will be ignored.
 
 ## Examples
 

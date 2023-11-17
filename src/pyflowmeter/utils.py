@@ -21,11 +21,11 @@ def random_string():
 def get_statistics(alist: list):
     """Get summary statistics of a list"""
     iat = dict()
-
     if len(alist) > 1:
         iat["total"] = sum(alist)
         iat["max"] = max(alist)
         iat["min"] = min(alist)
+        alist = [float(e) for e in alist]
         iat["mean"] = numpy.mean(alist)
         iat["std"] = numpy.sqrt(numpy.var(alist))
     else:
