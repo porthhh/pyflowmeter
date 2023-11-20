@@ -118,7 +118,8 @@ class FlowSession(DefaultSession):
         return self.flows.values()
     
     def write_data_csv(self):
-        for flow in self.flows.values():
+        flows = list(self.flows.values())
+        for flow in flows:
             data = flow.get_data()
 
             if self.csv_line == 0:
