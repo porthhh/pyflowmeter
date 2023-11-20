@@ -128,7 +128,8 @@ class FlowSession(DefaultSession):
             self.csv_line += 1
 
     def garbage_collect(self) -> None:
-        self.write_data_csv()
+        if self.to_csv:
+            self.write_data_csv()
         with self.lock:
             self.flows = {}
 
