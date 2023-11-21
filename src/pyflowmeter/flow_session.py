@@ -38,10 +38,11 @@ class FlowSession(DefaultSession):
     def send_flows_to_server(self):
         while True:
             if len(self.flows) != 0:
-                flows = list(self.flows.values())
+                with self.lock:
+                    flows = list(self.flows.values())
+                self.garbage_collect()
                 data = {'flows': [flow.get_data() for flow in flows]}
                 requests.post(self.server_endpoint, json=data)
-                self.garbage_collect()
             time.sleep(SENDING_INTERVAL)
 
     def toPacketList(self):
@@ -118,7 +119,8 @@ class FlowSession(DefaultSession):
         return self.flows.values()
     
     def write_data_csv(self):
-        flows = list(self.flows.values())
+        with self.lock:
+            flows = list(self.flows.values())
         for flow in flows:
             data = flow.get_data()
 
