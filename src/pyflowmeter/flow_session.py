@@ -22,8 +22,8 @@ class FlowSession(DefaultSession):
         self.csv_line = 0
         self.packets_count = 0
         self.GARBAGE_COLLECT_PACKETS = 10000 if self.server_endpoint is None else 100
+
         print(self.server_endpoint)
-        self.start_time = 0
         self.lock = Lock() 
         if self.server_endpoint is not None:
             thread = Thread(target=self.send_flows_to_server)
@@ -43,7 +43,7 @@ class FlowSession(DefaultSession):
                 self.garbage_collect()
                 data = {'flows': [flow.get_data() for flow in flows]}
                 requests.post(self.server_endpoint, json=data)
-            time.sleep(SENDING_INTERVAL)
+            time.sleep(self.sending_interval)
 
     def toPacketList(self):
         # Sniffer finished all the packets it needed to sniff.
@@ -104,12 +104,6 @@ class FlowSession(DefaultSession):
 
         flow.add_packet(packet, direction)
 
-        current_time = time.time()
-        if current_time - self.start_time >= SENDING_INTERVAL:
-            self.start_time = current_time
-            self.garbage_collect()
-
-
         if self.packets_count % self.GARBAGE_COLLECT_PACKETS == 0 or (
             flow.duration > 120 
         ):
@@ -138,7 +132,7 @@ class FlowSession(DefaultSession):
 
 
 
-def generate_session_class(server_endpoint, verbose, to_csv, output_file):
+def generate_session_class(server_endpoint, verbose, to_csv, output_file, sending_interval):
     return type(
         "NewFlowSession",
         (FlowSession,),
@@ -146,6 +140,7 @@ def generate_session_class(server_endpoint, verbose, to_csv, output_file):
             "server_endpoint": server_endpoint,
             "verbose": verbose,
             "to_csv": to_csv,
-            "output_file": output_file
+            "output_file": output_file,
+            "sending_interval": sending_interval
         },
     )

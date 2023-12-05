@@ -5,11 +5,11 @@ from .flow_session import generate_session_class
 
 def create_sniffer(
     input_file=None, input_interface=None, server_endpoint=None, verbose=False, to_csv=False,
-    output_file=None
+    output_file=None, sending_interval=1
 ):
     assert (to_csv == False) or (output_file is not None)
 
-    NewFlowSession = generate_session_class(server_endpoint, verbose, to_csv, output_file)
+    NewFlowSession = generate_session_class(server_endpoint, verbose, to_csv, output_file, sending_interval)
 
     if input_file is not None:
         return AsyncSniffer(

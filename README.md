@@ -33,17 +33,21 @@ This function returns a `scapy.sendrecv.AsyncSniffer` object.
     * Wheather or not to save the output flows as csv. The data will be saved on `output_file`.
 
 * `output_file` [default=None]  
-    * File to store the data. If `to_csv` is set to `False`, this parameter will be ignored.
+    * File to store the data. If `to_csv` is set to `False`, this parameter will be ignored.  
+
+* `sending_interval` [defalut=1]  
+    * The frequency, in seconds, at which data will be sent to the server. If `server_endpoint` is None, this parameter will be ignored.
 
 ## Examples
 
-### Sniff packets real-time from interface and send the flow to a server (**need root permission**): 
+### Sniff packets real-time from interface and send the flow to a server evry 5 seconds(**need root permission**): 
 ```python
 from pyflowmeter.sniffer import create_sniffer
 
 sniffer = create_sniffer(
             server_endpoint='http://127.0.0.1:5000/send_traffic',
-            verbose=True
+            verbose=True,
+            sending_interval=5
         )
 
 sniffer.start()
