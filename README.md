@@ -40,7 +40,7 @@ This function returns a `scapy.sendrecv.AsyncSniffer` object.
 
 ## Examples
 
-### Sniff packets real-time from interface and send the flow to a server evry 5 seconds(**need root permission**): 
+### Sniff packets real-time from interface and send the flow to a server every 5 seconds(**need root permission**): 
 ```python
 from pyflowmeter.sniffer import create_sniffer
 
@@ -48,6 +48,45 @@ sniffer = create_sniffer(
             server_endpoint='http://127.0.0.1:5000/send_traffic',
             verbose=True,
             sending_interval=5
+        )
+
+sniffer.start()
+try:
+    sniffer.join()
+except KeyboardInterrupt:
+    print('Stopping the sniffer')
+    sniffer.stop()
+finally:
+    sniffer.join()
+```
+
+### Get CSV analysis from a pcap file:
+```python
+from pyflowmeter.sniffer import create_sniffer
+
+sniffer = create_sniffer(
+            input_file='path_to_the_file.pcap',
+            to_csv=True,
+            output_file='./flows_test.csv',
+        )
+
+sniffer.start()
+try:
+    sniffer.join()
+except KeyboardInterrupt:
+    print('Stopping the sniffer')
+    sniffer.stop()
+finally:
+    sniffer.join()
+```
+
+### Simulate offline traffic from a file and send the data to a server:
+```python
+from pyflowmeter.sniffer import create_sniffer
+
+sniffer = create_sniffer(
+            input_file='path_to_the_file.pcap',
+            server_endpoint='http://127.0.0.1:5000/send_traffic',
         )
 
 sniffer.start()
