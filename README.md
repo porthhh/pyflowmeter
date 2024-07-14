@@ -1,5 +1,5 @@
 # Python CICFlowMeter (PyFlowmeter)
-
+[![Downloads](https://static.pepy.tech/badge/pyflowmeter)](https://pepy.tech/project/pyflowmeter)
 > This project is cloned from [Python Wrapper CICflowmeter](https://gitlab.com/hieulw/cicflowmeter) and customized to fit my need. Therefore, it is not maintained actively. If there are any problems, please create an issue or a pull request.  
 
 
